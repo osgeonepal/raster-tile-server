@@ -2,3 +2,4 @@ venv
 optimized
 raw
 .DS_Store
+**/__pycache__/
