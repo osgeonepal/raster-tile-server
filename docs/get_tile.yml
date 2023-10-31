@@ -1,0 +1,31 @@
+---
+parameters:
+  - name: id
+    in: path
+    type: string
+    required: true
+    description: The ID used in the URL path.
+
+  - name: z
+    in: path
+    type: integer
+    required: true
+    description: The zoom level of the tile.
+
+  - name: x
+    in: path
+    type: integer
+    required: true
+    description: The X coordinate of the tile.
+
+  - name: y
+    in: path
+    type: integer
+    required: true
+    description: The Y coordinate of the tile.
+
+responses:
+  200:
+    description: Success. Returns the requested tile image.
+  404:
+    description: Tile not found. Indicates that the specified tile
