@@ -1,10 +1,10 @@
 import os ,copy
-from flask import Flask ,send_file, Response, request, jsonify, Blueprint
+from flask import Flask ,send_file, Response, request, jsonify, Blueprint 
 from flask_cors import CORS
 from typing import Optional, Tuple
 from schemas.schema import RGBOptionSchema
 from dotenv import load_dotenv
-
+from exceptions import errorhandler
 
 
 load_dotenv()
@@ -12,6 +12,7 @@ flask_app = Flask(__name__)
 flask_app.config["JSON_SORT_KEYS"] = False
 base_dir = os.path.dirname(os.path.abspath(__file__))
 TILE_API = Blueprint("tile_api", __name__)
+errorhandler._setup_error_handlers(flask_app)
 
 
 #handle Cors
@@ -20,6 +21,7 @@ CORS(flask_app, resources={
     r"/tile-async/*": {"origins": "*"},
     r"/bounds/*": {"origins": "*"},
 })
+
 
 @TILE_API.route('/tile/<path:id>/<int:z>/<int:x>/<int:y>.png')
 def get_tile(id , z , x, y):
