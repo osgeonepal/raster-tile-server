@@ -1,0 +1,17 @@
+---
+parameters:
+  - name: id
+    in: path
+    type: string
+    required: true
+    description: The ID used in the URL path.
+
+responses:
+  200:
+    description: Success. Returns the bounding box for the specified ID.
+    schema:
+      properties:
+        bounds:
+          type: object
+  404:
+    description: File not found. Indicates that the file for the specified ID was not found.

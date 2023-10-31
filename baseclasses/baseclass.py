@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 
 
 class RasterStore(ABC):
-    """Abstract base class for all Terracotta raster backends.
+    """Abstract base class for all raster backends.
 
     Defines a common interface for all raster backends."""
 

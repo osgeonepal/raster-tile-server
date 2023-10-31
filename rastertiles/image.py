@@ -88,3 +88,16 @@ def to_uint8(data: Array, lower_bound: Number, upper_bound: Number) -> Array:
     rescaled = np.rint(rescaled)
     return rescaled.astype(np.uint8)
 
+
+
+def empty_image(size: Tuple[int, int]) -> BinaryIO:
+    """Return a fully transparent PNG image of given size"""
+    settings = get_settings()
+    compress_level = settings.get('PNG_COMPRESS_LEVEL')
+
+    img = Image.new(mode="P", size=size, color=0)
+
+    sio = BytesIO()
+    img.save(sio, "png", compress_level=compress_level, transparency=0)
+    sio.seek(0)
+    return sio
