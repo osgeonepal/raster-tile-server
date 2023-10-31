@@ -20,7 +20,7 @@ def get_tile(id , z , x, y):
 
     from utils.generate_image import generate_image
 
-    tiff_files = ["optimized/testverybig_red.tif", "optimized/testverybig_green.tif","optimized/testverybig_blue.tif"]
+    tiff_files = [f"/home/anup/b3d/code/b3d-backend/optimized/{id}_red.tif", f"/home/anup/b3d/code/b3d-backend/optimized/{id}_green.tif", f"/home/anup/b3d/code/b3d-backend/optimized/{id}_blue.tif"]
 
 
     def generate_image_async(tiff_files, id , z , x, y):
