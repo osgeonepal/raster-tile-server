@@ -2,6 +2,7 @@
 
 The driver to interact with.
 """
+import os
 from typing import (
     Any,
     List,
@@ -11,6 +12,7 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
+    Dict
 )
 from baseclasses.baseclass import (RasterStore,)
 from drivers.geotiff_raster_store import GeoTiffRasterStore
@@ -70,8 +72,6 @@ class DataDriver:
         """
         path_source = "/Users/anupdahal/outsource/decoding/flask-tile-api/optimized/"
 
-        print(keys,'keys')
-
         path = path_source+keys[0]+"_"+keys[1]+".tif"
         print(path,'path')
 
@@ -92,7 +92,8 @@ class DataDriver:
         )
     
 
-    
+_DRIVER_CACHE: Dict[Tuple[int],DataDriver] = {}
+
 def get_driver(
     url_or_path: URLOrPathType, provider: Optional[str] = None
 ) -> DataDriver:
@@ -112,6 +113,17 @@ def get_driver(
         provider: Driver provider to use (one of sqlite, sqlite-remote, mysql, postgresql;
             default: auto-detect).
     """
+    cache_key=os.getpid()
+    print(cache_key,'cache key')
+    if cache_key not in _DRIVER_CACHE:
+        print("not in cache creating")
+        driver = DataDriver(
+            raster_store=GeoTiffRasterStore()
+        )
+        _DRIVER_CACHE[cache_key] = driver
+        print(id(_DRIVER_CACHE[cache_key].raster_store),"newly created id ")
 
-    driver = DataDriver(raster_store=GeoTiffRasterStore())
-    return driver
+
+    print(id(_DRIVER_CACHE[cache_key].raster_store))
+
+    return _DRIVER_CACHE[cache_key]
