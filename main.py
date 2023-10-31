@@ -1,14 +1,16 @@
-import os 
-from flask import Flask ,send_file, Response, request, jsonify
+import os ,copy
+from flask import Flask ,send_file, Response, request, jsonify, Blueprint
 from flask_cors import CORS
 from typing import Optional, Tuple
 from schemas.schema import RGBOptionSchema
 from dotenv import load_dotenv
 
 
+
+load_dotenv()
 flask_app = Flask(__name__)
 base_dir = os.path.dirname(os.path.abspath(__file__))
-load_dotenv()
+TILE_API = Blueprint("tile_api", __name__)
 
 
 #handle Cors
@@ -18,7 +20,7 @@ CORS(flask_app, resources={
     r"/bounds/*": {"origins": "*"},
 })
 
-@flask_app.route('/tile/<path:id>/<int:z>/<int:x>/<int:y>.png')
+@TILE_API.route('/tile/<path:id>/<int:z>/<int:x>/<int:y>.png')
 def get_tile(id , z , x, y):
 
     from utils.generate_image import generate_image
@@ -33,7 +35,7 @@ def get_tile(id , z , x, y):
     return send_file(image, mimetype="image/png")
 
 
-@flask_app.route('/tile-async/<path:keys>/<int:tile_z>/<int:tile_x>/<int:tile_y>.png')
+@TILE_API.route('/tile-async/<path:keys>/<int:tile_z>/<int:tile_x>/<int:tile_y>.png')
 def get_tile_async(tile_z: int, tile_y: int, tile_x: int, keys: str = "") -> Response:
     tile_xyz = (tile_x, tile_y, tile_z)
     return _get_rgb_image(keys, tile_xyz=tile_xyz)
@@ -61,7 +63,7 @@ def _get_rgb_image(
 
     return send_file(image, mimetype="image/png")
 
-@flask_app.route('/bounds/<path:id>')
+@TILE_API.route('/bounds/<path:id>',methods=["GET"])
 def get_bounds(id):
     try:
         from utils.createbbox import createbbox
@@ -74,4 +76,7 @@ def get_bounds(id):
         return jsonify({"message":"File not found"})
     
     
+    
+new_tile_api = copy.deepcopy(TILE_API)    
+flask_app.register_blueprint(new_tile_api, url_prefix="/")
 
