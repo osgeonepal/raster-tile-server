@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 flask_app = Flask(__name__)
-# suppress implicit sort of JSON responses alphabetically
 flask_app.config["JSON_SORT_KEYS"] = False
 base_dir = os.path.dirname(os.path.abspath(__file__))
 TILE_API = Blueprint("tile_api", __name__)
