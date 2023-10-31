@@ -76,7 +76,8 @@ def get_bounds(id):
         return jsonify({"message":"File not found"})
     
     
-    
+
+# extensions might modify the global blueprints, so copy before use
 new_tile_api = copy.deepcopy(TILE_API)    
 flask_app.register_blueprint(new_tile_api, url_prefix="/")
 
