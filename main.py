@@ -15,6 +15,7 @@ load_dotenv()
 CORS(flask_app, resources={
     r"/tile/*": {"origins": "*"},
     r"/tile-async/*": {"origins": "*"},
+    r"/bounds/*": {"origins": "*"},
 })
 
 @flask_app.route('/tile/<path:id>/<int:z>/<int:x>/<int:y>.png')

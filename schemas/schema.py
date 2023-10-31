@@ -42,14 +42,13 @@ class RGBOptionSchema(Schema):
         fields.Float(),
         validate=validate.Length(equal=4),
         example="[-107.88857386093643, 38.98669825130578, -107.8871274949119, 38.98772137392041]",
-        description="bounds box in epsg 4326",
+        description="Bounds box in epsg 4326",
     )
-
 
     @pre_load
     def process_ranges(self, data: Mapping[str, Any], **kwargs: Any) -> Dict[str, Any]:
         data = dict(data.items())
-        for var in ("r_range", "g_range", "b_range", "tile_size","bounds"):
+        for var in ("r_range", "g_range", "b_range", "tile_size" ,"bounds",):
             val = data.get(var)
             if val:
                 try:
