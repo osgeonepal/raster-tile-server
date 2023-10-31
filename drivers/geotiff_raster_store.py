@@ -128,14 +128,11 @@ class GeoTiffRasterStore(RasterStore):
         )
 
         cache_key = hash(ensure_hashable(kwargs))
-        # print(cache_key,'cache_key')
 
         try:
             with self._cache_lock:
                 result = self._raster_cache[cache_key]
-                # print(result,"result")
         except KeyError:
-            # print("KeyError")
             pass
         else:
             if asynchronous:

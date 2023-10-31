@@ -12,7 +12,7 @@ from rastertiles   import xyz
 from settings.setting import get_settings
 from exceptions import exception
 from utils.profile import trace
-from drivers.terracotta_driver import get_driver
+from drivers.data_driver import get_driver
 
 Number = TypeVar("Number", int, float)
 ListOfRanges = Sequence[Optional[Tuple[Optional[Number], Optional[Number]]]]
@@ -25,7 +25,9 @@ def rgb(
     tile_xyz: Optional[Tuple[int, int, int]] = None,
     *,
     stretch_ranges: Optional[ListOfRanges] = None,
-    tile_size: Optional[Tuple[int, int]] = None
+    tile_size: Optional[Tuple[int, int]] = None,
+    bounds: Optional[Tuple[float, float,float,float]] = None,
+
 ) -> BinaryIO:
     """Return RGB image as PNG
 
@@ -59,7 +61,7 @@ def rgb(
     else:
         tile_size_ = tile_size
 
-    driver = get_driver(settings.get('DRIVER_PATH'), provider=settings.get('DRIVER_PROVIDER'))
+    driver = get_driver()
   
     key_names=('name', 'band')
 
@@ -75,6 +77,7 @@ def rgb(
             band_keys,
             tile_xyz=tile_xyz,
             tile_size=tile_size_,
+            bounds=bounds,
             asynchronous=True,
         )
 
@@ -86,9 +89,6 @@ def rgb(
     for i, (band_key, band_stretch_override, band_data_future) in enumerate(
         band_items
     ):
-        keys = (*some_keys, band_key)
-        # metadata = driver.get_metadata(keys)
-        # band_stretch_range = list(metadata["range"])
         band_stretch_range=[0,255]
         scale_min, scale_max = band_stretch_override
 
@@ -103,9 +103,7 @@ def rgb(
                 "Upper stretch bound must be higher than lower bound"
             )
 
-        band_data = band_data_future.result()
-    
-
+        band_data = band_data_future.result()    
         out_arrays.append(image.to_uint8(band_data, *band_stretch_range))
 
     out = np.ma.stack(out_arrays, axis=-1)

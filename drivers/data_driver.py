@@ -1,4 +1,4 @@
-"""drivers/terracotta_driver.py
+"""drivers/data_driver.py
 
 The driver to interact with.
 """
@@ -27,9 +27,9 @@ T = TypeVar("T")
 
 
 class DataDriver:
-    """Terracotta driver object used to retrieve raster tiles and metadata.
+    """Data driver object used to retrieve raster tiles and metadata.
 
-    Do not instantiate directly, use :func:`terracotta.get_driver` instead.
+    Do not instantiate directly, use :func:`get_driver` instead.
     """
     def __init__(self,  raster_store: RasterStore) -> None:
         self.raster_store = raster_store
@@ -56,7 +56,7 @@ class DataDriver:
             tile_bounds: Physical bounds of the tile to read, in Web Mercator projection (EPSG3857).
                 Reads the whole dataset if not given.
             tile_size: Shape of the output array to return. Must be two-dimensional.
-                Defaults to :attr:`~terracotta.config.TerracottaSettings.DEFAULT_TILE_SIZE`.
+                Defaults to :attr:`Settings.DEFAULT_TILE_SIZE`.
             preserve_values: Whether to preserve exact numerical values (e.g. when reading
                 categorical data). Sets all interpolation to nearest neighbor.
             asynchronous: If given, the tile will be read asynchronously in a separate thread.
@@ -70,11 +70,8 @@ class DataDriver:
             the result.
 
         """
-        path_source = "/Users/anupdahal/outsource/decoding/flask-tile-api/optimized/"
-
+        path_source =  os.getenv("OPTIMIZED_PATH")
         path = path_source+keys[0]+"_"+keys[1]+".tif"
-        print(path,'path')
-
         return self.raster_store.get_raster_tile(
             path=path,
             tile_bounds=tile_bounds,
@@ -94,10 +91,8 @@ class DataDriver:
 
 _DRIVER_CACHE: Dict[Tuple[int],DataDriver] = {}
 
-def get_driver(
-    url_or_path: URLOrPathType, provider: Optional[str] = None
-) -> DataDriver:
-    """Retrieve Terracotta driver instance for the given path.
+def get_driver() -> DataDriver:
+    """Retrieve Data driver instance for the given path.
 
     This function always returns the same instance for identical inputs.
 
@@ -106,24 +101,13 @@ def get_driver(
        Always retrieve Driver instances through this function instead of
        instantiating them directly to prevent caching issues.
 
-    Arguments:
-
-        url_or_path: A path identifying the database to connect to.
-            The expected format depends on the driver provider.
-        provider: Driver provider to use (one of sqlite, sqlite-remote, mysql, postgresql;
-            default: auto-detect).
     """
     cache_key=os.getpid()
-    print(cache_key,'cache key')
     if cache_key not in _DRIVER_CACHE:
-        print("not in cache creating")
         driver = DataDriver(
             raster_store=GeoTiffRasterStore()
         )
         _DRIVER_CACHE[cache_key] = driver
-        print(id(_DRIVER_CACHE[cache_key].raster_store),"newly created id ")
 
-
-    print(id(_DRIVER_CACHE[cache_key].raster_store))
 
     return _DRIVER_CACHE[cache_key]

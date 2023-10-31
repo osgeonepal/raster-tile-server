@@ -14,7 +14,7 @@ def get_settings():
     'LAZY_LOADING_MAX_SHAPE': (1024, 1024),
     'PNG_COMPRESS_LEVEL': 1,
     'DB_CONNECTION_TIMEOUT':  10,
-    'REMOTE_DB_CACHE_DIR': os.path.join(tempfile.gettempdir(), "terracotta"),
+    'REMOTE_DB_CACHE_DIR': os.path.join(tempfile.gettempdir(), "b3d"),
     'REMOTE_DB_CACHE_TTL':10 * 60 ,
     'RESAMPLING_METHOD':  "average",
     'REPROJECTION_METHOD': "linear",

@@ -75,7 +75,6 @@ def to_uint8(data, lower_bound, upper_bound):
 
 def array_to_png(img_data, colormap= None) :
     """Encode an 8bit array as PNG"""
-    # from terracotta.cmaps import get_cmap
     PNG_COMPRESS_LEVEL = 1
     compress_level = PNG_COMPRESS_LEVEL
 
