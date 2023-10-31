@@ -1,5 +1,5 @@
 import os 
-from flask import Flask ,send_file, Response, request
+from flask import Flask ,send_file, Response, request, jsonify
 from flask_cors import CORS
 from typing import Optional, Tuple
 from schemas.schema import RGBOptionSchema
@@ -33,7 +33,7 @@ def get_tile(id , z , x, y):
 
 
 @flask_app.route('/tile-async/<path:keys>/<int:tile_z>/<int:tile_x>/<int:tile_y>.png')
-def get_rgb(tile_z: int, tile_y: int, tile_x: int, keys: str = "") -> Response:
+def get_tile_async(tile_z: int, tile_y: int, tile_x: int, keys: str = "") -> Response:
     tile_xyz = (tile_x, tile_y, tile_z)
     return _get_rgb_image(keys, tile_xyz=tile_xyz)
 
@@ -59,6 +59,18 @@ def _get_rgb_image(
     )
 
     return send_file(image, mimetype="image/png")
+
+@flask_app.route('/bounds/<path:id>')
+def get_bounds(id):
+    try:
+        from utils.createbbox import createbbox
+        optimized_path = os.getenv("OPTIMIZED_PATH")
+        tiff_file = f"{optimized_path}{id}_red.tif"
+        bounds = createbbox(tiff_file)
+        if bounds:
+            return jsonify({"bounds":bounds})
+    except:
+        return jsonify({"message":"File not found"})
     
     
 
