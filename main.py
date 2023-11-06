@@ -1,5 +1,6 @@
-import os ,copy
-from flask import Flask ,send_file, Response, jsonify, Blueprint 
+import os
+import copy
+from flask import Flask, Response, jsonify, Blueprint, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
 from exceptions import errorhandler
@@ -17,28 +18,16 @@ errorhandler._setup_error_handlers(flask_app)
 swagger = Swagger(flask_app)
 
 
-#handle Cors
+# handle Cors
 CORS(flask_app, resources={
-    r"/tile/*": {"origins": "*"},
     r"/tile-async/*": {"origins": "*"},
     r"/bounds/*": {"origins": "*"},
 })
 
 
-@TILE_API.route('/tile/<path:id>/<int:z>/<int:x>/<int:y>.png')
-@swag_from('docs/get_tile.yml')
-def get_tile(id , z , x, y):
-
-    from utils.generate_image import generate_image
-    optimized_path = os.getenv("OPTIMIZED_PATH")
-    tiff_files = [f"{optimized_path}{id}_red.tif", f"{optimized_path}{id}_green.tif", f"{optimized_path}{id}_blue.tif"]
-
-    def generate_image_async(tiff_files, id , z , x, y):
-        return generate_image(tiff_files,id , z , x, y)
-    
-    futures = generate_image_async(tiff_files, id , z , x, y) 
-    image = futures
-    return send_file(image, mimetype="image/png")
+@flask_app.route('/')
+def upload():
+    return render_template("upload.html")
 
 
 @TILE_API.route('/tile-async/<path:keys>/<int:tile_z>/<int:tile_x>/<int:tile_y>.png')
@@ -49,8 +38,7 @@ def get_tile_async(tile_z: int, tile_y: int, tile_x: int, keys: str = "") -> Res
     return _get_rgb_image(keys, tile_xyz=tile_xyz)
 
 
-
-@TILE_API.route('/bounds/<path:id>',methods=["GET"])
+@TILE_API.route('/bounds/<path:id>', methods=["GET"])
 @swag_from('docs/get_bounds.yml')
 def get_bounds(id):
     try:
@@ -59,18 +47,11 @@ def get_bounds(id):
         tiff_file = f"{optimized_path}{id}_red.tif"
         bounds = createbbox(tiff_file)
         if bounds:
-            return jsonify({"bounds":bounds})
+            return jsonify({"bounds": bounds})
     except:
-        return jsonify({"message":"File not found"})
-    
-    
+        return jsonify({"message": "File not found"})
+
 
 # extensions might modify the global blueprints, so copy before use
-new_tile_api = copy.deepcopy(TILE_API)    
+new_tile_api = copy.deepcopy(TILE_API)
 flask_app.register_blueprint(new_tile_api, url_prefix="/")
-
-
-
-
-
-

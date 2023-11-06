@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload TIFF File</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #upload-container {
+            text-align: center;
+        }
+
+        #upload-button {
+            display: none;
+        }
+
+        #upload-label {
+            display: block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #upload-label:hover {
+            background-color: #2980b9;
+        }
+
+        #file-name {
+            margin-top: 10px;
+        }
+
+        #heading {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #logo {
+            max-width: 150px; /* Adjust the logo size as needed */
+        }
+    </style>
+</head>
+<body>
+    <div id="upload-container">
+        <div id="heading_osgeo">OSGEO</div>
+        <img id="logo" src="{{ url_for('static', filename='images/osgeo_nepal.png') }}" alt="Your Logo">
+        <div id="heading">A lightweight COG (Cloud-Optimized Geotiff) Tile Server</div>
+        <label for="upload-button" id="upload-label">Select TIF File</label>
+        <input type="file" id="upload-button" accept=".tiff, .tif">
+        <div id="file-name"></div>
+        <progress id="upload-progress" value="0" max="100"></progress>
+    </div>
+
+    <script>
+        const uploadButton = document.getElementById("upload-button");
+        const fileNameDisplay = document.getElementById("file-name");
+        const progressBar = document.getElementById("upload-progress");
+
+        uploadButton.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                fileNameDisplay.textContent = "Selected file: " + file.name;
+                uploadFile(file);
+            }
+        });
+
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            // Replace the URL with your actual API endpoint
+            const apiUrl = "/Users/anupdahal/outsource/decoding/flask-tile-api/osgeo_nepal.png"; // Replace with your API endpoint
+
+            fetch(apiUrl, {
+                method: "POST",
+                body: formData,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("Upload successful", data);
+                })
+                .catch((error) => {
+                    console.error("Error uploading file", error);
+                });
+        }
+    </script>
+</body>
+</html>
+
