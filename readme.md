@@ -1,6 +1,4 @@
-# Your Flask App Name
-
-A brief description of your Flask web application.
+# COG ( GeoTIF ) Tile server
 
 ## Table of Contents
 
@@ -12,10 +10,11 @@ A brief description of your Flask web application.
 
 ## Features
 
-List some key features of your Flask app.
+List some key features :
 
 - Upload COG (Geotif) (.tif) UI and APIs
 - Asychronous tile server api (XYZ)--- png
 - Bouding box for the TIF
 - Least-frequently-used cache with ZLIB compression
 - Optimization before rendering
+- Highly customizable and reusability
